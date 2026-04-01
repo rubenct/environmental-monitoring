@@ -1,0 +1,11 @@
+.panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.loading {
+  color: #64748b;
+  font-size: 0.875rem;
+  padding: 1rem;
+}
