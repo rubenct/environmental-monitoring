@@ -2,21 +2,12 @@
 # Docs: https://docs.railway.app/reference/config
 
 [build]
-# Railway will auto-detect the Dockerfile in backend/
-builder = "docker"
 dockerfilePath = "backend/Dockerfile"
 
 [deploy]
-# Health check endpoint
 healthcheckPath = "/health"
-# Wait for database to be ready
-waitForPlatformBeforeBackup = false
-
-# Start command (overrides Dockerfile CMD)
-# Railway provides PORT env var automatically
 startCommand = "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"
 
-# Environment variables ( Railway will override these with actual values )
 [environment.variables]
 ENVIRONMENT = "production"
 PYTHONUNBUFFERED = "1"
