@@ -2,9 +2,11 @@
 
 A real-time environmental monitoring dashboard for collecting, storing, and visualizing temperature and humidity data from multiple sensors.
 
-Live Demo: https://env-monitoring.vercel.app
+**Live Demo:** https://env-monitoring.vercel.app
 
-API: https://alert-forgiveness-production.up.railway.app
+**API:** https://alert-forgiveness-production.up.railway.app
+
+**GitHub:** https://github.com/rubenct/environmental-monitoring
 
 ## Features
 
