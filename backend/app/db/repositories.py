@@ -4,13 +4,38 @@ from uuid import UUID
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Query
 
 from app.models.db_models import Measurement
+
+
+# Interval formatters as a dispatch table (KISS principle)
+INTERVAL_FORMATTERS = {
+    "hour": lambda ts: ts.replace(minute=0, second=0, microsecond=0).isoformat(),
+    "day": lambda ts: ts.date().isoformat(),
+    "week": lambda ts: f"{ts.year}-W{ts.isocalendar()[1]:02d}",
+}
 
 
 class MeasurementRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
+
+    def _apply_filters(
+        self,
+        query: Query,
+        start: Optional[datetime] = None,
+        end: Optional[datetime] = None,
+        device_id: Optional[str] = None,
+    ) -> Query:
+        """Apply common filters to a query. (DRY principle)"""
+        if start is not None:
+            query = query.where(Measurement.timestamp >= start)
+        if end is not None:
+            query = query.where(Measurement.timestamp <= end)
+        if device_id is not None:
+            query = query.where(Measurement.device_id == device_id)
+        return query
 
     async def create(
         self,
@@ -45,16 +70,8 @@ class MeasurementRepository:
         offset: int = 0,
     ) -> Sequence[Measurement]:
         query = select(Measurement)
-
-        if start is not None:
-            query = query.where(Measurement.timestamp >= start)
-        if end is not None:
-            query = query.where(Measurement.timestamp <= end)
-        if device_id is not None:
-            query = query.where(Measurement.device_id == device_id)
-
-        query = query.order_by(Measurement.timestamp.desc())
-        query = query.limit(limit).offset(offset)
+        query = self._apply_filters(query, start, end, device_id)
+        query = query.order_by(Measurement.timestamp.desc()).limit(limit).offset(offset)
 
         result = await self.session.execute(query)
         return result.scalars().all()
@@ -74,13 +91,7 @@ class MeasurementRepository:
             func.min(Measurement.humidity).label("min_humidity"),
             func.max(Measurement.humidity).label("max_humidity"),
         )
-
-        if device_id is not None:
-            query = query.where(Measurement.device_id == device_id)
-        if start is not None:
-            query = query.where(Measurement.timestamp >= start)
-        if end is not None:
-            query = query.where(Measurement.timestamp <= end)
+        query = self._apply_filters(query, start, end, device_id)
 
         result = await self.session.execute(query)
         row = result.one()
@@ -106,25 +117,18 @@ class MeasurementRepository:
         interval: str = "hour",
     ) -> list[dict]:
         query = select(Measurement)
-
-        if device_id is not None:
-            query = query.where(Measurement.device_id == device_id)
-        if start is not None:
-            query = query.where(Measurement.timestamp >= start)
-        if end is not None:
-            query = query.where(Measurement.timestamp <= end)
-
+        query = self._apply_filters(query, start, end, device_id)
         query = query.order_by(Measurement.timestamp)
 
         result = await self.session.execute(query)
         measurements = result.scalars().all()
 
+        # Group measurements into time buckets
+        formatter = INTERVAL_FORMATTERS.get(interval, INTERVAL_FORMATTERS["hour"])
         buckets: dict[str, list[Measurement]] = {}
         for m in measurements:
-            key = self._truncate_timestamp(m.timestamp, interval)
-            if key not in buckets:
-                buckets[key] = []
-            buckets[key].append(m)
+            key = formatter(m.timestamp)
+            buckets.setdefault(key, []).append(m)
 
         return [
             {
@@ -135,12 +139,3 @@ class MeasurementRepository:
             }
             for key, bucket in sorted(buckets.items())
         ]
-
-    def _truncate_timestamp(self, ts: datetime, interval: str) -> str:
-        if interval == "hour":
-            return ts.replace(minute=0, second=0, microsecond=0).isoformat()
-        elif interval == "day":
-            return ts.date().isoformat()
-        else:
-            week = ts.isocalendar()[1]
-            return f"{ts.year}-W{week:02d}"
