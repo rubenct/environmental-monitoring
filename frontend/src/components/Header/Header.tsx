@@ -39,8 +39,6 @@ export function Header() {
       <div className={styles.nav}>
         <a
           href="https://www.rcarino.com/"
-          target="_blank"
-          rel="noopener noreferrer"
           className={styles.navButton}
           aria-label="Home"
         >
