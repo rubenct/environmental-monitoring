@@ -1,6 +1,8 @@
 import type { MeasurementFilters, Measurement, Stats, TimeseriesBucket } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+// Use environment variable for production, fallback to local
+// Vercel: Set VITE_API_BASE_URL=https://alert-forgiveness-production.up.railway.app
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://alert-forgiveness-production.up.railway.app';
 
 function formatDateLocal(date: Date): string {
   const year = date.getFullYear();
