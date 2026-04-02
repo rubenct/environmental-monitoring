@@ -8,6 +8,14 @@ A real-time environmental monitoring dashboard for collecting, storing, and visu
 
 **GitHub:** https://github.com/rubenct/environmental-monitoring
 
+## Technologies
+
+**Backend:** Python, FastAPI, SQLAlchemy, Pydantic, PostgreSQL, Uvicorn
+
+**Frontend:** React, TypeScript, Vite, Recharts, date-fns
+
+**Infrastructure:** Railway, Vercel, Docker, PostgreSQL
+
 ## Features
 
 - **Real-time Data Visualization** - Interactive charts for temperature and humidity
