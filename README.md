@@ -275,7 +275,7 @@ MIT License
 
 ## Author
 
-Ruben Quintana
+Ruben Cariño
 
 ## Acknowledgments
 
