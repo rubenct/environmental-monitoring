@@ -1,19 +1,80 @@
 .header {
-  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
   background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
   color: white;
   margin-bottom: 2rem;
   border-radius: 0 0 1rem 1rem;
 }
 
+.nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.navButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.navButton svg {
+  flex-shrink: 0;
+}
+
+.titleSection {
+  text-align: center;
+  flex: 1;
+}
+
 .title {
   margin: 0;
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
 .subtitle {
   margin: 0.25rem 0 0;
   opacity: 0.85;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .titleSection {
+    order: -1;
+    width: 100%;
+    flex: none;
+  }
+  
+  .title {
+    font-size: 1.25rem;
+  }
+  
+  .navButton span {
+    display: none;
+  }
+  
+  .navButton {
+    padding: 0.5rem;
+  }
 }
