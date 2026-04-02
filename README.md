@@ -277,6 +277,15 @@ npm test
 - Environment-based configuration (no hardcoded secrets)
 - CORS configured for production
 
+## Code Quality
+
+This project follows clean code principles:
+
+- **SOLID**: Single Responsibility, Dependency Injection, Interface Segregation
+- **DRY**: Centralized validation helpers, reusable filtering logic, API client abstraction
+- **KISS**: Simple functions, dispatch tables for interval formatting
+- **YAGNI**: Minimal dependencies, focused feature set
+
 ## License
 
 MIT License
