@@ -6,6 +6,7 @@ Run this script to create env_monitoring.db with 7 days of data.
 
 import sqlite3
 import random
+import uuid
 from datetime import datetime, timedelta
 
 def generate_data():
@@ -41,6 +42,7 @@ def generate_data():
                 hum = max(30, min(95, hum))
                 
                 measurements.append({
+                    "id": str(uuid.uuid4()),
                     "timestamp": timestamp.isoformat(),
                     "temperature": round(temp, 1),
                     "humidity": round(hum, 1),
@@ -81,7 +83,7 @@ def create_database():
         cursor.execute(
             "INSERT INTO measurements (id, timestamp, temperature, humidity, device_id) VALUES (?, ?, ?, ?, ?)",
             (
-                f"{m['timestamp']}-{m['device_id']}",  # Simple ID
+                m['id'],
                 m['timestamp'],
                 m['temperature'],
                 m['humidity'],
