@@ -6,7 +6,9 @@ __pycache__/
 .Python
 venv/
 .venv/
+# Database files (except demo data)
 *.db
+!backend/env_monitoring.db
 
 # Node
 node_modules/

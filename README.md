@@ -10,11 +10,11 @@ A real-time environmental monitoring dashboard for collecting, storing, and visu
 
 ## Technologies
 
-**Backend:** Python, FastAPI, SQLAlchemy, Pydantic, PostgreSQL, Uvicorn
+**Backend:** Python, FastAPI, SQLAlchemy, Pydantic, SQLite/PostgreSQL, Uvicorn
 
 **Frontend:** React, TypeScript, Vite, Recharts, date-fns
 
-**Infrastructure:** Railway, Vercel, Docker, PostgreSQL
+**Infrastructure:** Railway/Render, Vercel, Docker
 
 ## Features
 
@@ -60,7 +60,8 @@ A real-time environmental monitoring dashboard for collecting, storing, and visu
 | **FastAPI**    | 0.109+  | REST API framework     |
 | **SQLAlchemy** | 2.0+    | ORM with async support |
 | **Pydantic**   | 2.5+    | Data validation        |
-| **PostgreSQL** | 16+     | Relational database    |
+| **SQLite**     | -       | Default database       |
+| **PostgreSQL** | 16+     | Production database    |
 | **Uvicorn**    | 0.27+   | ASGI server            |
 
 ### Frontend
@@ -77,10 +78,46 @@ A real-time environmental monitoring dashboard for collecting, storing, and visu
 
 | Technology    | Purpose                |
 | ------------- | --------------------- |
-| **Railway**   | Backend hosting       |
+| **Railway/Render** | Backend hosting  |
 | **Vercel**    | Frontend hosting      |
-| **PostgreSQL**| Database (Railway)    |
+| **SQLite**    | Default database      |
 | **Docker**    | Containerization      |
+
+## Database
+
+This project uses **SQLite** by default for simplicity and zero external dependencies.
+
+### Demo Data
+
+The repository includes a pre-populated SQLite database (`backend/env_monitoring.db`) with:
+- 7 days of realistic environmental data
+- 3 sensors with temperature and humidity readings
+- Readings every 2 hours
+- Realistic patterns (cooler at night, warmer midday)
+
+**Stats:**
+- ~3,800 measurements
+- Temperature: 10-40°C (avg 24.7°C)
+- Humidity: 20-92% (avg 56.1%)
+
+### Regenerate Demo Data
+
+If you want to regenerate the demo data:
+
+```bash
+cd backend
+python generate_demo_data.py
+```
+
+This creates a fresh `env_monitoring.db` with current timestamps.
+
+### Production
+
+For production deployments:
+- **SQLite** (default): Works out of the box, perfect for demos and portfolios
+- **PostgreSQL**: Set `DATABASE_URL` environment variable for production databases
+
+The backend automatically detects which database to use based on the `DATABASE_URL` environment variable.
 
 ## Project Structure
 
