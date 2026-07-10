@@ -4,7 +4,9 @@ __pycache__
 .env
 .git
 .gitignore
+# Database files (except demo data)
 *.db
+!env_monitoring.db
 data/
 venv/
 .venv/
