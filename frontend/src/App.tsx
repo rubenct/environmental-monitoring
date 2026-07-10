@@ -1,5 +1,4 @@
-import { useState, useMemo } from 'react';
-import { subDays } from 'date-fns';
+import { useState, useMemo, useEffect } from 'react';
 import { Header } from './components/Header/Header';
 import { DeviceFilter } from './components/DeviceFilter/DeviceFilter';
 import { DateRangePicker } from './components/DateRangePicker/DateRangePicker';
@@ -7,15 +6,36 @@ import { StatsPanel } from './components/StatsPanel/StatsPanel';
 import { TimeSeriesChart } from './components/TimeSeriesChart/TimeSeriesChart';
 import { DataTable } from './components/DataTable/DataTable';
 import { useMeasurements } from './hooks/useMeasurements';
+import { fetchDateRange, type DateRange } from './api/measurements';
 import styles from './App.module.css';
 
 const DEVICES = ['sensor-01', 'sensor-02', 'sensor-03'];
 
 export function App() {
   const [deviceId, setDeviceId] = useState('');
-  const [startDate, setStartDate] = useState<Date | null>(subDays(new Date(), 7));
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [interval, setInterval] = useState<'hour' | 'day' | 'week'>('hour');
+  const [availableRange, setAvailableRange] = useState<DateRange | null>(null);
+  const [loadingRange, setLoadingRange] = useState(true);
+
+  // Fetch available date range on mount
+  useEffect(() => {
+    fetchDateRange()
+      .then((range) => {
+        setAvailableRange(range);
+        if (range.min_date && range.max_date) {
+          setStartDate(new Date(range.min_date));
+          setEndDate(new Date(range.max_date));
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch date range:', err);
+      })
+      .finally(() => {
+        setLoadingRange(false);
+      });
+  }, []);
 
   const filters = useMemo(
     () => ({
@@ -28,6 +48,13 @@ export function App() {
   );
 
   const { stats, timeseries, loading, error, refetch } = useMeasurements(filters);
+
+  const resetToAvailableRange = () => {
+    if (availableRange?.min_date && availableRange?.max_date) {
+      setStartDate(new Date(availableRange.min_date));
+      setEndDate(new Date(availableRange.max_date));
+    }
+  };
 
   return (
     <div className={styles.app}>
@@ -57,6 +84,18 @@ export function App() {
             </select>
           </div>
         </section>
+
+        {availableRange && !loadingRange && (
+          <div className={styles.dataInfo}>
+            <p>
+              Data available: <strong>{new Date(availableRange.min_date!).toLocaleDateString()}</strong> to{' '}
+              <strong>{new Date(availableRange.max_date!).toLocaleDateString()}</strong>
+            </p>
+            <button onClick={resetToAvailableRange} className={styles.resetButton}>
+              Reset to available range
+            </button>
+          </div>
+        )}
 
         {error && (
           <div className={styles.error}>

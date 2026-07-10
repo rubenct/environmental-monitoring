@@ -108,6 +108,44 @@ body {
   background: #b91c1c;
 }
 
+.dataInfo {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.dataInfo p {
+  margin: 0;
+  color: #1e40af;
+  font-size: 0.875rem;
+}
+
+.dataInfo strong {
+  font-weight: 600;
+}
+
+.resetButton {
+  padding: 0.5rem 1rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.resetButton:hover {
+  background: #2563eb;
+}
+
 @media (max-width: 640px) {
   .main {
     padding: 0 0.75rem 1.5rem;

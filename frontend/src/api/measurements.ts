@@ -36,3 +36,12 @@ export async function fetchTimeseries(filters: MeasurementFilters): Promise<Time
 export async function fetchMeasurements(filters: MeasurementFilters): Promise<Measurement[]> {
   return apiFetch<Measurement[]>('/measurements', buildQuery(filters));
 }
+
+export interface DateRange {
+  min_date: string | null;
+  max_date: string | null;
+}
+
+export async function fetchDateRange(): Promise<DateRange> {
+  return apiFetch<DateRange>('/measurements/date-range');
+}

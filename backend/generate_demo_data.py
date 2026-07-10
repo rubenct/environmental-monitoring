@@ -9,7 +9,10 @@ import random
 from datetime import datetime, timedelta
 
 def generate_data():
-    """Generate 7 days of realistic environmental data."""
+    """Generate 7 days of realistic environmental data with fixed dates."""
+    
+    # Fixed date range: January 1-7, 2024
+    start_date = datetime(2024, 1, 1, 0, 0, 0)
     
     # Temperature pattern by hour (cooler at night, warmer midday)
     temps_by_hour = [15, 14, 14, 14, 14, 15, 17, 19, 21, 23, 24, 25, 26, 26, 26, 25, 24, 22, 20, 18, 17, 16, 16, 15]
@@ -19,16 +22,11 @@ def generate_data():
     sensor_offset = {"sensor-01": 0, "sensor-02": 2, "sensor-03": -1}
     
     measurements = []
-    now = datetime.utcnow()
     
     # Generate 7 days of data, every 2 hours, 3 sensors
-    for day_offset in range(7, -1, -1):
+    for day_offset in range(7):
         for hour in range(0, 24, 2):
-            # Skip future hours for today
-            if day_offset == 0 and hour > now.hour:
-                continue
-            
-            timestamp = now - timedelta(days=day_offset, hours=now.hour - hour)
+            timestamp = start_date + timedelta(days=day_offset, hours=hour)
             base_temp = temps_by_hour[hour]
             base_hum = hums_by_hour[hour]
             daily_var = random.randint(-2, 2)

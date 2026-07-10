@@ -98,3 +98,23 @@ async def get_timeseries(
         device_id=device_id,
         interval=interval,
     )
+
+
+@router.get("/date-range")
+async def get_date_range(session: SessionDep):
+    """Get the min and max dates available in the database."""
+    from sqlalchemy import select, func
+    from app.models.db_models import Measurement
+    
+    result = await session.execute(
+        select(
+            func.min(Measurement.timestamp).label("min_date"),
+            func.max(Measurement.timestamp).label("max_date"),
+        )
+    )
+    row = result.one()
+    
+    return {
+        "min_date": row.min_date.isoformat() if row.min_date else None,
+        "max_date": row.max_date.isoformat() if row.max_date else None,
+    }
