@@ -16,13 +16,24 @@ function buildQuery(filters: MeasurementFilters): URLSearchParams {
   return params;
 }
 
-async function apiFetch<T>(endpoint: string, params?: URLSearchParams): Promise<T> {
+async function apiFetch<T>(endpoint: string, params?: URLSearchParams, retries = 3): Promise<T> {
   const url = `${API_BASE}${endpoint}${params ? `?${params}` : ''}`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
+  
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      if (attempt === retries - 1) throw error;
+      // Wait before retry (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt)));
+    }
   }
-  return response.json();
+  
+  throw new Error('Failed to fetch after retries');
 }
 
 export async function fetchStats(filters: MeasurementFilters): Promise<Stats> {
